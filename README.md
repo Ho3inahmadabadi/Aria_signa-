@@ -6,7 +6,7 @@ This repository contains a simple multi-timeframe trading bot example for **BTCU
 
 - **indicators.py** – helper functions for EMA, RSI and ATR calculation.
 - **multi_timeframe_analyzer.py** – combines indicator data from 1m/3m/5m/15m timeframes into a final LONG/SHORT/NO_SIGNAL decision.
-- **futures_backtest.py** – downloads historical candles from Binance and runs a simple backtest while printing logs.
+- **futures_backtest.py** – downloads historical futures candles from Binance (`https://fapi.binance.com`) and runs a simple backtest while printing logs.
 - **futures_live_pro_bot.py** – checks for new signals and optionally sends a Telegram message.
 - **full_test.py** – quick end‑to‑end test downloading data and running the backtest.
 
@@ -18,7 +18,7 @@ python full_test.py --offline
 ```
 
 Use `--offline` to run the test with bundled sample data. Omit the flag to
-download fresh candles from Binance (requires internet access).
+download fresh futures candles from Binance (requires internet access).
 
 For live Telegram alerts set the environment variables `TELEGRAM_TOKEN` and `TELEGRAM_CHAT_ID` then run:
 

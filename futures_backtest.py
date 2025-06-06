@@ -5,7 +5,8 @@ from typing import Dict, Optional
 from multi_timeframe_analyzer import MultiTimeframeAnalyzer
 
 
-BASE_URL = "https://api.binance.com/api/v3/klines"
+# Use Binance Futures endpoint instead of the spot API
+BASE_URL = "https://fapi.binance.com/fapi/v1/klines"
 
 
 def fetch_klines(
@@ -15,7 +16,7 @@ def fetch_klines(
     start_time: Optional[int] = None,
     end_time: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Fetch klines from Binance API."""
+    """Fetch klines from Binance Futures API."""
     params = {"symbol": symbol, "interval": interval, "limit": limit}
     if start_time is not None:
         params["startTime"] = start_time
