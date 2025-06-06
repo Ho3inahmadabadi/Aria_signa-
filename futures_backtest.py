@@ -5,7 +5,7 @@ from typing import Dict, Optional
 from multi_timeframe_analyzer import MultiTimeframeAnalyzer
 
 
-BASE_URL = "https://api.binance.com/api/v3/klines"
+BASE_URL = "https://fapi.binance.com/fapi/v1/klines"
 
 
 def fetch_klines(
@@ -67,8 +67,8 @@ def backtest(symbol: str = "BTCUSDT", data: Optional[Dict[str, pd.DataFrame]] = 
 
     for _, row in base.iterrows():
         ts = row["open_time"]
-        final, details = analyzer.analyze(ts)
-        log = f"Time: {ts} | Final Signal: {final} | Details: {details}"
+        final, details, conf = analyzer.analyze(ts)
+        log = f"Time: {ts} | Final: {final} | Conf: {conf:.2f} | Details: {details}"
         trade_result = "NONE"
 
         if position and final != position and final != "NO_SIGNAL":
