@@ -1,32 +1,35 @@
 import argparse
 import pandas as pd
-from futures_backtest import fetch_klines, prepare_data, backtest
+from futures_backtest import fetch_klines
 from multi_timeframe_analyzer import MultiTimeframeAnalyzer
 
 
-def load_offline_data(symbol: str) -> dict[str, pd.DataFrame]:
-    tfs = ["1m", "3m", "5m", "15m"]
+TFS = ["1m", "3m", "5m", "15m"]
+
+
+def load_recent(symbol: str) -> dict[str, pd.DataFrame]:
     data = {}
-    for tf in tfs:
-        path = f"tests/data/{tf}.csv"
-        df = pd.read_csv(path, parse_dates=["open_time", "close_time"])
-        data[tf] = df
+    for tf in TFS:
+        data[tf] = fetch_klines(symbol, tf, limit=200)
     return data
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--offline", action="store_true", help="use bundled data instead of Binance API")
+    parser.add_argument("--symbol", default="BTCUSDT", help="futures symbol")
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=0.75,
+        help="minimum confidence for reporting a signal",
+    )
     args = parser.parse_args()
 
-    symbol = "BTCUSDT"
-    data = load_offline_data(symbol) if args.offline else prepare_data(symbol)
-    analyzer = MultiTimeframeAnalyzer(data)
+    data = load_recent(args.symbol)
+    analyzer = MultiTimeframeAnalyzer(data, confidence_threshold=args.threshold)
     ts = data["1m"].iloc[-1]["open_time"]
-    final, details = analyzer.analyze(ts)
-    print(f"Latest Final Signal: {final} | Details: {details}")
-    print("Running short backtest...")
-    backtest(symbol, data if args.offline else None)
+    final, details, confidence = analyzer.analyze(ts)
+    print(f"Symbol: {args.symbol} | Final: {final} | Confidence: {confidence:.2f} | Details: {details}")
 
 
 if __name__ == "__main__":
